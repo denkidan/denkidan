@@ -379,9 +379,7 @@
     }
 
     leves.forEach(function (f) {
-      // souris : survol ; passer d'une image à l'autre du diptyque ne referme pas
-      f.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") montrer(f); });
-      f.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse") fermeture = setTimeout(cacher, 90); });
+      // souris : rien ne s'ouvre au survol ni au clic (retiré à la demande de Lucas)
       // toucher : premier appui = ouvrir
       f.addEventListener("click", function (e) {
         if (e.pointerType === "mouse" && matchMedia("(hover: hover)").matches) return;
@@ -389,7 +387,7 @@
         montrer(f);
       });
       // clavier : le focus fait comme le survol
-      f.addEventListener("focus", function () { montrer(f); });
+      f.addEventListener("focus", function () { if (f.matches(":focus-visible")) montrer(f); });
       f.addEventListener("blur", function (e) { if (!ov.classList.contains("par-toucher") && leves.indexOf(e.relatedTarget) < 0) cacher(); });
     });
     // toucher : appui hors du tirage = fermer ; appui sur une autre vignette (sous le calque) = changer

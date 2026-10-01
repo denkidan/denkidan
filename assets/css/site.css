@@ -231,7 +231,7 @@ body.edito .b.b-h { width: fit-content; max-width: 100%; margin-inline: auto; }
 body.edito .b.b-h img { width: calc(var(--h) * var(--ar)); max-width: 100%; }
 /* Diptyque : chaque photo garde ses 31vw, les deux papiers restent séparés de 1vw */
 body.edito .b-pair.gap-tight { width: calc(var(--w) + 4 * var(--proof-side)); column-gap: 1vw; }
-body.edito .b-pair__img { margin: 0; cursor: zoom-in; }
+body.edito .b-pair__img { margin: 0; }
 body.edito .b-pair__img:focus-visible { outline: 1px solid var(--texte-e); outline-offset: 4px; }
 body.edito .fin { margin-top: 26vh; }
 
