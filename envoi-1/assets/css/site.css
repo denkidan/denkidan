@@ -1,0 +1,200 @@
+/* ==========================================================================
+   denkidan.com — Lucas Talarn
+   ========================================================================== */
+
+/* Police auto-hébergée : Noto Sans SC (Noto Sans CJK SC), réduite aux caractères du site.
+   Un caractère chinois absent s'affiche dans la police chinoise du système en attendant. */
+@font-face { font-family: 'Denkidan'; src: url(/assets/fonts/denkidan-400.woff) format('woff'); font-weight: 400; font-display: swap; }
+@font-face { font-family: 'Denkidan'; src: url(/assets/fonts/denkidan-500.woff) format('woff'); font-weight: 500; font-display: swap; }
+
+:root {
+  --rouge: #C4261E;              /* rouge d'imprimerie, légèrement pigmentaire */
+  --blanc: rgba(255, 255, 245, .9);
+  --papier: #FAF6EC;             /* crème très clair */
+  --encre: #1B1A18;
+  --m: 28px;                     /* marge du cadre */
+  --rail: 22px;                  /* largeur d'un texte vertical */
+  --pv-w: clamp(120px, 11vw, 190px);
+  --pv-dx: 2vw;                  /* variante B : léger décentrage. Mettre 0 pour la variante A */
+  --pv-dy: -1vh;
+  --txt: 11.5px;
+  --track: .11em;
+  --fade: 220ms;
+  --seq-pad: calc(var(--m) * 2 + var(--rail));   /* marge latérale des séquences */
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  font-family: 'Denkidan', 'PingFang SC', 'Hiragino Sans GB', 'Microsoft YaHei', 'Noto Sans CJK SC', system-ui, sans-serif;
+  font-weight: 400;
+  font-size: var(--txt);
+  letter-spacing: .03em;
+  text-transform: none;
+  -webkit-font-smoothing: antialiased;
+}
+img { display: block; max-width: 100%; height: auto; }
+a { color: inherit; text-decoration: none; cursor: pointer; }
+a:focus-visible { outline: 1px solid currentColor; outline-offset: 5px; }
+.zh { letter-spacing: .05em; text-transform: none; font-feature-settings: normal; }
+.idx { text-combine-upright: all; -webkit-text-combine: horizontal; letter-spacing: 0; }
+/* Capitales et interlettrage : seulement les rails et les étiquettes */
+.rail, .lab, .fin { text-transform: uppercase; letter-spacing: var(--track); }
+.rail .zh, .fin .zh { text-transform: none; letter-spacing: .05em; }
+.sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Lien : opacité seule, pas de soulignement */
+.lnk { opacity: .55; transition: opacity 160ms ease; }
+.lnk:hover, .lnk:focus-visible, .lnk.is-on, .lnk[aria-current] { opacity: 1; }
+.lnk[aria-current] { font-weight: 500; }
+
+/* Texte vertical : CJK debout, latin couché, chiffres groupés debout */
+.v { writing-mode: vertical-rl; white-space: nowrap; display: flex; align-items: center; gap: .9em; padding: 6px 0; block-size: max-content; inline-size: max-content; }
+.v > * { flex-shrink: 0; }
+
+/* ---------------- Cadre rouge (accueil, contact, 404) ---------------- */
+
+body.rouge { background: var(--rouge); color: var(--blanc); height: 100svh; overflow: hidden; }
+.grain { position: fixed; inset: 0; pointer-events: none; background: url(/assets/img/site/grain.png) 0 0 / 160px; mix-blend-mode: multiply; opacity: .22; z-index: 0; }
+
+.rail { position: fixed; z-index: 3; display: flex; flex-direction: column; gap: 26px; }
+.rail--g-haut { left: var(--m); top: var(--m); }
+.rail--g-bas  { left: var(--m); bottom: var(--m); }
+.rail--d-haut { right: var(--m); top: var(--m); }
+.rail--d-bas  { right: var(--m); bottom: var(--m); }
+.rail ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 26px; }
+
+.nom { opacity: .9; }
+
+/* Aperçu central : deux calques pour le fondu croisé */
+.apercu { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
+.apercu img {
+  position: absolute; left: 50%; top: 50%;
+  width: var(--pv-w); height: auto;
+  transform: translate(calc(-50% + var(--pv-dx)), calc(-50% + var(--pv-dy)));
+  opacity: 0; transition: opacity var(--fade) ease;
+}
+.apercu img.on { opacity: 1; }
+
+/* Clic vers un projet : les textes disparaissent, l'image reste */
+body.depart .rail, body.depart .bloc-centre { opacity: 0; transition: opacity 140ms ease; }
+
+/* Contact : petit bloc à la place de l'image */
+.bloc-centre {
+  position: fixed; left: 50%; top: 50%; z-index: 2;
+  transform: translate(calc(-50% + var(--pv-dx)), calc(-50% + var(--pv-dy)));
+  width: max(var(--pv-w), 220px);
+  display: flex; flex-direction: column; gap: 14px;
+  text-transform: none; letter-spacing: .04em; font-size: 13px; line-height: 1.5;
+}
+.bloc-centre a { border-bottom: 1px solid rgba(255,255,245,.45); align-self: flex-start; }
+.bloc-centre a:hover { border-bottom-color: currentColor; }
+.bloc-centre .lab { text-transform: uppercase; letter-spacing: var(--track); font-size: var(--txt); opacity: .7; }
+
+/* ---------------- Pages papier (projet, mentions) ---------------- */
+
+body.papier { background: var(--papier); color: var(--encre); }
+body.papier .rail { mix-blend-mode: difference; color: #fff; }
+body.papier .rail .lnk { opacity: .6; }
+body.papier .rail .lnk:hover, body.papier .rail .lnk:focus-visible, body.papier .rail [aria-current] { opacity: 1; }
+.ui { opacity: 0; transition: opacity 200ms ease; }
+.pret .ui { opacity: 1; }
+
+/* La page projet ne déborde jamais à droite (lettrage coupé par le bord de l'écran) */
+body.page-projet { overflow-x: hidden; }
+.page-projet main { overflow-x: clip; }
+
+.seq { padding-inline: var(--seq-pad); position: relative; }
+
+/* Champ de couleur : bord à bord, le contenu garde la marge des séquences */
+.champ { margin-inline: calc(-1 * var(--seq-pad)); padding-inline: var(--seq-pad); position: relative; display: flow-root; }
+.champ-rouge { background: var(--rouge); }
+
+/* Bascule : fin du champ rouge, lettrage à cheval sur la limite */
+.b-bascule {
+  position: relative; height: var(--h); background: var(--rouge);
+  margin-inline: calc(-1 * var(--seq-pad));
+}
+.lettrage {
+  position: absolute; left: var(--l); width: var(--w); max-width: none; height: auto;
+  top: calc(var(--h) - var(--split) * var(--w) * var(--ratio));
+  pointer-events: none; z-index: 1;
+}
+.lettrage-haut { clip-path: inset(0 0 calc(100% - var(--split) * 100%) 0); }
+.lettrage-bas  { clip-path: inset(calc(var(--split) * 100%) 0 0 0); }
+
+/* Repère documentaire en marge droite, à la hauteur du haut de l'image */
+.meta { position: absolute; right: var(--m); writing-mode: vertical-rl; white-space: nowrap; font-size: 10.5px; letter-spacing: var(--track); text-transform: uppercase; opacity: .75; }
+.champ-rouge .meta { color: var(--blanc); }
+
+/* Rails au-dessus du rouge */
+body.papier .rail.sur-rouge { mix-blend-mode: normal; color: var(--blanc); }
+.b { margin: var(--mt, 0) 0 0; text-transform: none; letter-spacing: .04em; }
+.b img { width: 100%; max-width: calc(88svh * var(--ar, 1.5)); }
+.b.al-center img { margin-inline: auto; }
+.b.al-right img { margin-left: auto; }
+.b figcaption { padding-top: 8px; font-size: 11px; opacity: .65; }
+.b.al-right figcaption { text-align: right; }
+
+.s-xs { width: 18vw; } .s-s { width: 28vw; } .s-m { width: 42vw; } .s-l { width: 60vw; } .s-xl { width: 78vw; }
+.al-left { margin-right: auto; }
+.al-center { margin-left: auto; margin-right: auto; }
+.al-right { margin-left: auto; }
+.b-full { width: 100vw; margin-left: calc(-1 * var(--seq-pad)); }
+.b-full img { max-width: none; }
+
+.b-pair { display: grid; grid-template-columns: 1fr 1fr; }
+.b-pair.gap-small { column-gap: 2vw; }
+.b-pair.gap-large { column-gap: 8vw; }
+.b-pair.va-start { align-items: start; } .b-pair.va-center { align-items: center; } .b-pair.va-end { align-items: end; }
+
+.b-text { max-width: 420px; font-size: 13px; line-height: 1.6; }
+.b-text p { margin: 0 0 1em; }
+
+.info { max-width: 420px; margin: 40vh 0 0; text-transform: none; letter-spacing: .04em; font-size: 13px; line-height: 1.6; scroll-margin-top: 20vh; }
+.info h2 { margin: 0 0 1.4em; font-size: 15px; font-weight: 500; letter-spacing: .05em; }
+.info p { margin: 0 0 1em; }
+.info a { border-bottom: 1px solid currentColor; }
+.fin { display: flex; justify-content: space-between; align-items: baseline; gap: 24px; margin-top: 30vh; padding-bottom: calc(var(--m) + 8px); }
+.fin a { display: inline-flex; gap: .9em; align-items: baseline; padding: 10px 0; }
+
+.texte-legal { max-width: 520px; padding: 22vh 0 18vh; text-transform: none; letter-spacing: .03em; font-size: 13px; line-height: 1.65; }
+.texte-legal h1 { font-size: 15px; font-weight: 500; letter-spacing: .05em; margin: 0 0 3em; }
+.texte-legal h2 { font-size: var(--txt); font-weight: 500; letter-spacing: var(--track); text-transform: uppercase; margin: 2.6em 0 .6em; }
+.texte-legal p { margin: 0; }
+.texte-legal a { border-bottom: 1px solid currentColor; }
+
+/* ---------------- Téléphone : une autre composition ---------------- */
+
+@media (max-width: 760px) {
+  :root { --m: 18px; --pv-w: clamp(150px, 44vw, 230px); --pv-dx: 0px; --pv-dy: -3svh; --txt: 11px; }
+
+  .v { writing-mode: horizontal-tb; padding: 5px 0; }
+  .rail, .rail ul { gap: 4px; }
+  .rail--g-haut { left: var(--m); top: auto; bottom: var(--m); }
+  .rail--g-bas  { left: var(--m); bottom: auto; top: var(--m); }
+  .rail--d-haut { right: var(--m); top: var(--m); }
+  .rail--d-bas  { right: var(--m); bottom: var(--m); align-items: flex-end; }
+  .idx { text-combine-upright: none; -webkit-text-combine: none; }
+
+  :root { --seq-pad: var(--m); }
+  .lnk { opacity: .78; }
+  .s-xs { width: 42vw; } .s-s { width: 56vw; } .s-m { width: 74vw; } .s-l, .s-xl { width: 100%; }
+  .b { margin-top: calc(var(--mt, 0px) * .6); }
+  .b-pair { grid-template-columns: 1fr; row-gap: 14vh; }
+  .b-pair > :last-child { width: 72%; margin-left: auto; }
+  .info { margin-top: 28vh; }
+  .fin { margin-top: 22vh; }
+
+  .lettrage { left: var(--lm); width: var(--wm); top: calc(var(--h) - var(--split) * var(--wm) * var(--ratio)); }
+  .meta { right: 4px; font-size: 9.5px; }
+
+  /* Projet : barre du haut horizontale */
+  .page-projet .rail--g-haut { top: var(--m); bottom: auto; flex-direction: row; gap: 18px; }
+  .page-projet .rail--d-bas  { top: var(--m); bottom: auto; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { transition-duration: 0ms !important; animation-duration: 0ms !important; }
+}
