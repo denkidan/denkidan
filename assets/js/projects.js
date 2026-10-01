@@ -33,7 +33,7 @@
 window.SITE = {
   name: "Lucas Talarn",
   email: "lucastalarn@gmail.com",
-  portrait: { src: "/assets/img/site/portrait", w: 672, h: 895, alt: "Lucas Talarn, portrait au photomaton, yeux fermés" }
+  portrait: { src: "/assets/img/site/photomaton", w: 680, h: 680, alt: "Lucas Talarn, portrait au photomaton, yeux fermés" }
 };
 
 window.PROJECTS = [

@@ -6,6 +6,7 @@
    Un caractère chinois absent s'affiche dans la police chinoise du système en attendant. */
 @font-face { font-family: 'Denkidan'; src: url(/assets/fonts/denkidan-400.woff) format('woff'); font-weight: 400; font-display: swap; }
 @font-face { font-family: 'Denkidan'; src: url(/assets/fonts/denkidan-500.woff) format('woff'); font-weight: 500; font-display: swap; }
+@font-face { font-family: 'Denkidan'; src: url(/assets/fonts/denkidan-700.woff) format('woff'); font-weight: 700; font-display: swap; }
 
 :root {
   --rouge: #C4261E;              /* rouge d'imprimerie, légèrement pigmentaire */
@@ -69,6 +70,11 @@ body.rouge { background: var(--rouge); color: var(--blanc); height: 100svh; over
 .rail ul { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 26px; }
 
 .nom { opacity: .9; }
+
+/* Menus des pages rouges (accueil, contact, 404) : plus gras et plus présents sur le rouge */
+body.rouge .rail { font-weight: 700; }
+body.rouge .lnk { opacity: .82; }
+body.rouge .lnk:hover, body.rouge .lnk:focus-visible, body.rouge .lnk.is-on, body.rouge .lnk[aria-current] { opacity: 1; font-weight: 700; }
 
 /* Aperçu central : deux calques pour le fondu croisé */
 .apercu { position: fixed; inset: 0; z-index: 1; pointer-events: none; }
