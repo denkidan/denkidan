@@ -139,6 +139,12 @@ body.page-projet { overflow-x: hidden; }
 
 /* Rails au-dessus du rouge */
 body.papier .rail.sur-rouge { mix-blend-mode: normal; color: var(--blanc); }
+
+/* Menu des pages projet : même graisse que l'accueil, projet ouvert à pleine opacité */
+.page-projet .rail, .page-projet .fin { font-weight: 700; }
+body.page-projet .rail .lnk, body.page-projet .fin .lnk { opacity: .62; }
+body.page-projet .rail .lnk:hover, body.page-projet .rail .lnk:focus-visible, body.page-projet .rail .lnk[aria-current],
+body.page-projet .fin .lnk:hover, body.page-projet .fin .lnk:focus-visible { opacity: 1; font-weight: 700; }
 .b { margin: var(--mt, 0) 0 0; text-transform: none; letter-spacing: .04em; }
 .b img { width: 100%; max-width: calc(88svh * var(--ar, 1.5)); }
 .b.al-center img { margin-inline: auto; }
@@ -224,7 +230,12 @@ body.noir .rail { color: var(--ivoire); }
 
   /* Projet : barre du haut horizontale */
   .page-projet .rail--g-haut { top: var(--m); bottom: auto; flex-direction: row; gap: 18px; }
+  .page-projet .rail--g-haut ul { flex-direction: row; gap: 18px; }
   .page-projet .rail--d-bas  { top: var(--m); bottom: auto; }
+}
+/* Petits téléphones : les autres projets gardent seulement leur numéro */
+@media (max-width: 385px) {
+  .page-projet .rail--g-haut a:not([aria-current]) .idx ~ span { display: none; }
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -14,14 +14,15 @@
 <meta name="theme-color" content="#C4261E">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/denkidan-400.woff" as="font" type="font/woff" crossorigin>
-<link rel="stylesheet" href="/assets/css/site.css">
+<link rel="preload" href="/assets/fonts/denkidan-700.woff" as="font" type="font/woff" crossorigin>
+<link rel="stylesheet" href="/assets/css/site.css?v=3">
 </head>
 <!-- Pour un nouveau projet : copier ce dossier, changer data-slug et le <title>. Le contenu vient de /assets/js/projects.js -->
 <body class="papier page-projet" data-slug="china">
 
   <nav class="rail rail--g-haut ui" aria-label="Navigation">
-    <a class="lnk v" href="/">Index</a>
-    <span class="v" data-titre></span>
+    <a class="lnk v" href="/">Menu</a>
+    <ul data-projets-simples></ul>
   </nav>
 
   <main>
@@ -32,7 +33,7 @@
   </main>
 
   <noscript><p style="padding:24px">Ce site a besoin de JavaScript pour afficher les photographies. <a href="/">Retour</a></p></noscript>
-  <script src="/assets/js/projects.js"></script>
-  <script src="/assets/js/site.js"></script>
+  <script src="/assets/js/projects.js?v=3"></script>
+  <script src="/assets/js/site.js?v=3"></script>
 </body>
 </html>

@@ -134,9 +134,9 @@
     if (!p) return;
     var pos = PROJECTS.indexOf(p);
 
-    // Rail : numéro + titre (élément courant)
+    // Rail : ancien gabarit (titre seul) si une page l'utilise encore
     var t = document.querySelector("[data-titre]");
-    t.appendChild(etiquette(p));
+    if (t) t.appendChild(etiquette(p));
 
     // Séquence. Les blocs marqués field: "rouge" qui se suivent sont regroupés dans un même champ de couleur.
     var seq = document.querySelector("[data-sequence]");
@@ -191,16 +191,15 @@
       info.appendChild(el("p", {}, [el("a", { href: mail, text: p.book.label + " →" })]));
     }
 
-    // Fin : projet suivant ou retour à l'index
+    // Fin : retour au menu à gauche, projet suivant à droite (le dernier renvoie au premier)
     var fin = document.querySelector("[data-suivant]");
-    var nxt = PROJECTS[pos + 1];
-    if (nxt) {
+    fin.appendChild(el("a", { class: "lnk", href: "/", text: "Menu" }));
+    var nxt = PROJECTS[(pos + 1) % PROJECTS.length];
+    if (nxt !== p) {
       var a = el("a", { class: "lnk", href: "/" + nxt.slug + "/" });
       a.appendChild(el("span", { text: "Next /" }));
       a.appendChild(etiquette(nxt));
       fin.appendChild(a);
-    } else {
-      fin.appendChild(el("a", { class: "lnk", href: "/", text: "Index" }));
     }
 
     requestAnimationFrame(function () { document.body.classList.add("pret"); });
@@ -294,10 +293,11 @@
     catch (_) { return false; }
   })();
 
-  // Projets dans le rail (contact, 404) sans aperçu
+  // Projets dans le rail (pages projet, contact, 404) sans aperçu ; le projet ouvert est marqué
+  var slugCourant = document.body.dataset.slug || null;
   document.querySelectorAll("[data-projets-simples]").forEach(function (ul) {
     PROJECTS.forEach(function (p) {
-      var a = el("a", { class: "lnk v", href: "/" + p.slug + "/" });
+      var a = el("a", { class: "lnk v", href: "/" + p.slug + "/", "aria-current": p.slug === slugCourant ? "page" : null });
       a.appendChild(etiquette(p));
       ul.appendChild(el("li", {}, [a]));
     });
