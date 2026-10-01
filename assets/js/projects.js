@@ -152,4 +152,43 @@ window.PROJECTS = [
       { type: "spacer", height: "50vh" }
     ]
   }
+  ,
+  {
+    slug: "edito",
+    index: "03",
+    title: "Edito",
+    lang: "en",
+    base: "/assets/img/edito/",
+    numbering: true,          // numéros gris 01 à 11
+    numeros: "dessous",       // sous chaque image, alignés sur son bord gauche (diptyques compris)
+
+    images: {
+      "debout":     { w: 3888, h: 3888, alt: "Un homme torse nu en casquette et lunettes d’aviateur, mains sur les hanches devant une toile de fond ; une femme allongée à ses pieds" },
+      "ciseaux":    { w: 3888, h: 3888, alt: "Le même homme et la femme en lunettes noires ; il tient une mèche de ses cheveux et des ciseaux sous son menton" },
+      "etreinte":   { w: 3888, h: 3888, alt: "Une étreinte : une main baguée aux ongles noirs sur une épaule nue, un visage caché derrière des cheveux et des lunettes noires" },
+      "telecaster": { w: 3888, h: 3888, alt: "En costume rayé, casquette et lunettes noires, il joue d’une guitare électrique" },
+      "couteau":    { w: 3888, h: 3888, alt: "En lunettes d’aviateur et blouson de cuir, il pose la lame d’un couteau contre sa tempe" },
+      "masque":     { w: 3888, h: 3888, alt: "Un visage levé sous un masque de monstre aux dents pointues ; un œil apparaît dans l’ouverture" },
+      "visage":     { w: 3888, h: 3888, alt: "Un visage levé vers la lumière, presque entièrement dans l’ombre" },
+      "harmonica":  { w: 3863, h: 4829, alt: "Un homme en chapeau noir joue de l’harmonica, une cigarette entre les doigts, et regarde l’objectif" },
+      "profil":     { w: 3888, h: 3888, alt: "De profil, tête baissée devant une toile de fond marbrée, une sangle de guitare sur la veste" },
+      "fenetre":    { w: 3888, h: 3888, alt: "Torse nu devant une fenêtre, un homme se cache le visage dans son t-shirt, une guitare électrique sur les genoux, un buste d’enfant derrière lui" },
+      "cuisine":    { w: 3888, h: 3888, alt: "Dans une cuisine, un homme joue d’une guitare douze cordes, le visage effacé par le mouvement" }
+    },
+
+    // Version 1, cadre strict : un seul axe, images seules à 78 % de l'écran, diptyques de 63vw, 44vh entre deux blocs (marges doublées).
+    sequence: [
+      { type: "image", src: "debout",     height: 78, align: "center", marginTop: "11vh" },
+      { type: "pair",  images: ["ciseaux", "etreinte"], width: "63vw", gap: "tight", align: "center", marginTop: "44vh", mobile: "44vw" },
+      { type: "image", src: "telecaster", height: 78, align: "center", marginTop: "44vh" },
+      { type: "image", src: "couteau",    height: 78, align: "center", marginTop: "44vh" },
+      { type: "pair",  images: ["masque", "visage"], width: "63vw", gap: "tight", align: "center", marginTop: "44vh", mobile: "44vw" },
+      { type: "image", src: "harmonica",  height: 78, align: "center", marginTop: "44vh" },
+      { type: "image", src: "profil",     height: 78, align: "center", marginTop: "44vh" },
+      { type: "pair",  images: ["fenetre", "cuisine"], width: "63vw", gap: "tight", align: "center", marginTop: "44vh", mobile: "44vw" },
+      { type: "spacer", height: "8vh" }
+    ],
+
+    previews: ["debout", "harmonica", "masque", "couteau", "fenetre"]
+  }
 ];

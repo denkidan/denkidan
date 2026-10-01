@@ -211,6 +211,41 @@ body.noir .rail { color: var(--ivoire); }
 /* Numérotation grise en marge droite, à la hauteur du haut de l'image */
 .nb { position: absolute; right: var(--m); writing-mode: vertical-rl; white-space: nowrap; font-size: var(--txt); letter-spacing: var(--track); color: var(--gris); font-variant-numeric: tabular-nums; }
 
+
+/* ---------------- Edito : tirages sur papier, posés sur une table noire ---------------- */
+
+body.edito { --fond-e: #0F0F0E; --texte-e: #E8E5DE; --gris-e: #8C8A85;
+  --proof-paper: #EEEAE2; --proof-ink: #171715;
+  --proof-top: 9px; --proof-side: 10px; --proof-bottom: 26px;   /* côtés fins, bas environ 2,5 fois plus profond */
+  --proof-ombre: 0 1px 0 rgba(255, 255, 255, .025), 0 2px 8px rgba(0, 0, 0, .2);
+  background: var(--fond-e); color: var(--texte-e); }
+body.edito .rail { color: var(--texte-e); }
+/* Le papier s'ajoute autour de la photo : la photo garde sa taille, le tirage est un peu plus grand */
+body.edito .proof { background: var(--proof-paper); padding: var(--proof-top) var(--proof-side) var(--proof-bottom); position: relative; box-shadow: var(--proof-ombre); }
+body.edito .proof img { display: block; outline: 0; }
+/* Le numéro est imprimé dans la marge basse du papier */
+body.edito .proof .nb { position: absolute; left: var(--proof-side); right: auto; top: auto; bottom: 8px; margin: 0; padding: 0; width: auto;
+  writing-mode: horizontal-tb; font-size: 8px; line-height: 1; letter-spacing: .1em; color: var(--proof-ink); text-align: left; }
+/* Image seule : le tirage prend la largeur de sa photo */
+body.edito .b.b-h { width: fit-content; max-width: 100%; margin-inline: auto; }
+body.edito .b.b-h img { width: calc(var(--h) * var(--ar)); max-width: 100%; }
+/* Diptyque : chaque photo garde ses 31vw, les deux papiers restent séparés de 1vw */
+body.edito .b-pair.gap-tight { width: calc(var(--w) + 4 * var(--proof-side)); column-gap: 1vw; }
+body.edito .b-pair__img { margin: 0; cursor: zoom-in; }
+body.edito .b-pair__img:focus-visible { outline: 1px solid var(--texte-e); outline-offset: 4px; }
+body.edito .fin { margin-top: 26vh; }
+
+/* Le tirage rapproché : un seul calque fixe, la page reste visible derrière */
+.proof-preview { position: fixed; inset: 0; z-index: 50; display: grid; place-items: center; pointer-events: none;
+  background: rgba(0, 0, 0, .12); opacity: 0; visibility: hidden; transition: opacity 120ms ease, visibility 0s linear 120ms; }
+.proof-preview.is-on { opacity: 1; visibility: visible; transition: opacity 120ms ease; }
+.proof-preview.par-toucher { pointer-events: auto; }
+.proof-preview .proof { margin: 0; }
+.proof-preview__photo { position: relative; }
+.proof-preview__img { display: block; max-width: none; object-fit: contain; }
+.proof-preview__old { position: absolute; inset: 0; width: 100%; height: 100%; max-width: none; object-fit: contain; }
+.proof-preview__old.is-gone { opacity: 0; transition: opacity 120ms ease; }
+
 /* ---------------- Téléphone : une autre composition ---------------- */
 
 @media (max-width: 760px) {
@@ -253,8 +288,16 @@ body.noir .rail { color: var(--ivoire); }
   .page-projet .rail--g-haut ul { flex-direction: row; gap: 18px; }
   .page-projet .rail--d-bas  { top: var(--m); bottom: auto; }
 }
-/* Petits téléphones : les autres projets gardent seulement leur numéro */
-@media (max-width: 385px) {
+/* Edito sur téléphone : papier réduit, images seules à 84 %, diptyques côte à côte (jamais empilés) */
+@media (max-width: 760px) {
+  body.edito { --proof-top: 7px; --proof-side: 7px; --proof-bottom: 20px; }
+  body.edito .b.b-h img { width: var(--wm, 84vw); }
+  body.edito .b-pair.gap-tight { grid-template-columns: 1fr 1fr; column-gap: 2vw; row-gap: 0; width: min(calc(84vw + 4 * var(--proof-side)), 100%); margin-inline: auto; }
+  body.edito .b-pair.gap-tight > :last-child { width: auto; margin-left: 0; }
+  body.edito .proof .nb { font-size: 7.5px; bottom: 6px; }
+}
+/* Téléphone : dans la barre d'un projet, les autres projets gardent seulement leur numéro */
+@media (max-width: 760px) {
   .page-projet .rail--g-haut a:not([aria-current]) .idx ~ span { display: none; }
 }
 

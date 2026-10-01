@@ -142,7 +142,7 @@
     var seq = document.querySelector("[data-sequence]");
     var champ = null, premiere = true, compte = 0;
     var deux = function (n) { return ("0" + n).slice(-2); };
-    p.sequence.forEach(function (b) {
+    if (seq) (p.sequence || []).forEach(function (b) {
       // Numérotation grise (numbering: true) : une image = un numéro, une paire = deux, comptés depuis les données
       var label = null;
       if (p.numbering && b.type === "image") label = deux(++compte);
@@ -161,6 +161,9 @@
         seq.appendChild(n);
       }
     });
+
+    // Edito : un tirage du diptyque se rapproche au survol, au focus ou au toucher
+    tirage(p);
 
     // Menu coupé net par la limite du champ de couleur, comme le lettrage :
     // une copie claire au-dessus de la limite, le menu habituel en dessous.
@@ -268,7 +271,7 @@
           var d = p.images[b.src], ar = d ? (d.w / d.h).toFixed(4) : 1;
           var mobile = b.mobile === "full" ? "100vw" : (b.mobile || "84vw");
           var cls = "b " + (b.height ? "b-h" : "b-w") + " al-" + (b.align || "center") + (b.mobile === "full" ? " m-full" : "") +
-            (b.cheval != null ? " b-cheval" : "");
+            (b.cheval != null ? " b-cheval" : "") + (p.numeros === "dessous" ? " proof" : "");
           // cheval : la limite du champ de couleur passe derrière la photo, à cette part de sa hauteur
           var st = mt + (b.height ? ";--h:" + b.height + "svh" : ";--w:" + b.width) + tel + (b.cheval != null ? ";--cheval:" + b.cheval : "");
           var sz = "(max-width: 760px) " + mobile + ", " + (b.height ? "calc(" + b.height + "vh * " + ar + ")" : b.width);
@@ -296,7 +299,14 @@
           // Paire de largeur fixe (width: "63vw", gap: "tight") : une seule phrase en deux images
           var szp = "(max-width: 760px) " + (b.mobile || "76vw") + ", calc((" + b.width + " - 1vw) / 2)";
           return el("div", { class: "b b-pair b-wv al-" + (b.align || "center") + " gap-" + (b.gap || "tight") + " va-" + (b.valign || "start"), style: mt + ";--w:" + b.width + tel },
-            [numero(label), repere(b)].concat((b.images || []).map(function (c) { return el("figure", { style: "margin:0" }, [image(p, c, "m", false, szp)]); })));
+            // numeros: "dessous" (Edito) : chaque image du diptyque garde son propre numéro, sous elle
+            p.numeros === "dessous" && label
+              ? (b.images || []).map(function (c, i) {
+                  var no = label.split(" · ")[i], d = p.images[c] || {};
+                  return el("figure", { class: "b-pair__img proof proof--leve", tabindex: "0", role: "button", "data-cle": c, "data-no": no,
+                    "aria-label": no + " — " + (d.alt || "") }, [image(p, c, "m", false, szp), numero(no)]);
+                })
+              : [numero(label), repere(b)].concat((b.images || []).map(function (c) { return el("figure", { style: "margin:0" }, [image(p, c, "m", false, szp)]); })));
         }
         var demi = { xs: "xs", s: "xs", m: "s", l: "s", xl: "m", full: "m" }[b.size || "l"];
         return el("div", { class: "b b-pair s-" + (b.size || "l") + " al-" + (b.align || "center") + " gap-" + (b.gap || "small") + " va-" + (b.valign || "end"), style: mt },
@@ -308,6 +318,89 @@
           (b.paragraphs || []).map(function (t) { return el("p", { text: t }); }));
     }
     return null;
+  }
+
+  /* ======================= TIRAGE RAPPROCHÉ (Edito) ======================= */
+  // Un seul calque fixe pour toute la page. Le même tirage (papier, marges, numéro) en plus grand ;
+  // ses marges grandissent dans la même proportion que la photo. La vignette ne bouge pas.
+  function tirage(p) {
+    var ov = document.querySelector("[data-proof-preview]");
+    var leves = [].slice.call(document.querySelectorAll(".proof--leve"));
+    if (!ov || !leves.length) return;
+    var papier = ov.querySelector(".proof"), img = ov.querySelector(".proof-preview__img"),
+        ancien = ov.querySelector(".proof-preview__old"), no = ov.querySelector("[data-proof-no]");
+    var actif = null, fermeture = null, cache = {};
+    var tel = window.matchMedia("(max-width: 760px)");
+
+    function grande(cle) { return p.base + cle + "-1800" + (supporteWebp ? ".webp" : ".jpg"); }
+
+    function poser(f) {
+      var v = f.querySelector("img"), d = p.images[f.dataset.cle], cs = getComputedStyle(f);
+      var t = parseFloat(cs.paddingTop), s = parseFloat(cs.paddingLeft), b = parseFloat(cs.paddingBottom);
+      var w0 = v.getBoundingClientRect().width, ar = d.w / d.h;
+      var maxW = innerWidth * (tel.matches ? 0.92 : 0.82), maxH = innerHeight * (tel.matches ? 0.78 : 0.80);
+      // k : agrandissement du tirage entier (photo et papier), pour tenir dans maxW x maxH
+      var k = Math.min(maxW / (w0 + 2 * s), maxH / (w0 / ar + t + b));
+      var W = Math.round(w0 * k), H = Math.round(w0 * k / ar);
+      papier.style.padding = (t * k).toFixed(1) + "px " + (s * k).toFixed(1) + "px " + (b * k).toFixed(1) + "px";
+      img.style.width = W + "px"; img.style.height = H + "px";
+      var nbs = getComputedStyle(f.querySelector(".nb"));
+      no.style.left = (s * k).toFixed(1) + "px";
+      no.style.bottom = (parseFloat(nbs.bottom) * k).toFixed(1) + "px";
+      no.style.fontSize = (parseFloat(nbs.fontSize) * Math.min(k, 1.6)).toFixed(1) + "px";
+      no.textContent = f.dataset.no;
+      // d'abord l'image déjà chargée de la vignette, puis la grande dès qu'elle est prête
+      img.src = v.currentSrc || v.src; img.alt = v.alt || "";
+      var u = grande(f.dataset.cle);
+      if (!cache[u]) { cache[u] = new Image(); cache[u].src = u; }
+      var g = cache[u];
+      var mettre = function () { if (actif === f) img.src = u; };
+      if (g.complete && g.naturalWidth) mettre(); else g.addEventListener("load", mettre, { once: true });
+    }
+
+    function montrer(f) {
+      clearTimeout(fermeture);
+      if (f === actif) return;
+      var ouvert = ov.classList.contains("is-on");
+      if (ouvert && img.getAttribute("src")) {            // déjà ouvert : petit fondu d'une photo à l'autre
+        ancien.src = img.currentSrc || img.src;
+        ancien.classList.remove("is-gone"); void ancien.offsetWidth; ancien.classList.add("is-gone");
+      }
+      actif = f;
+      poser(f);
+      ov.classList.add("is-on");
+      ov.setAttribute("aria-hidden", "false");
+    }
+    function cacher() {
+      clearTimeout(fermeture);
+      actif = null;
+      ov.classList.remove("is-on", "par-toucher");
+      ov.setAttribute("aria-hidden", "true");
+    }
+
+    leves.forEach(function (f) {
+      // souris : survol ; passer d'une image à l'autre du diptyque ne referme pas
+      f.addEventListener("pointerenter", function (e) { if (e.pointerType === "mouse") montrer(f); });
+      f.addEventListener("pointerleave", function (e) { if (e.pointerType === "mouse") fermeture = setTimeout(cacher, 90); });
+      // toucher : premier appui = ouvrir
+      f.addEventListener("click", function (e) {
+        if (e.pointerType === "mouse" && matchMedia("(hover: hover)").matches) return;
+        ov.classList.add("par-toucher");
+        montrer(f);
+      });
+      // clavier : le focus fait comme le survol
+      f.addEventListener("focus", function () { montrer(f); });
+      f.addEventListener("blur", function (e) { if (!ov.classList.contains("par-toucher") && leves.indexOf(e.relatedTarget) < 0) cacher(); });
+    });
+    // toucher : appui hors du tirage = fermer ; appui sur une autre vignette (sous le calque) = changer
+    ov.addEventListener("click", function (e) {
+      if (papier.contains(e.target)) return;
+      var sous = document.elementsFromPoint(e.clientX, e.clientY).filter(function (n) { return n.classList && n.classList.contains("proof--leve"); })[0];
+      if (sous) montrer(sous); else cacher();
+    });
+    document.addEventListener("keydown", function (e) { if (e.key === "Escape") cacher(); });
+    window.addEventListener("resize", function () { if (actif) poser(actif); });
+    window.addEventListener("pagehide", cacher);
   }
 
   /* ======================= DÉMARRAGE ======================= */
