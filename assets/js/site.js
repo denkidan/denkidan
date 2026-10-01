@@ -27,6 +27,8 @@
     return f;
   }
 
+  // Version des images : à changer quand les fichiers sont régénérés, pour que les navigateurs ne gardent pas l'ancienne
+  var VIMG = "?c=srgb";
   function apercuSrc(p, cle) { return p.base + cle + "-preview"; }
   function cleSession(slug) { return "denkidan:apercu:" + slug; }
 
@@ -48,7 +50,7 @@
     });
 
     function precharger(base) {
-      var src = supporteWebp ? base + ".webp" : base + ".jpg";
+      var src = (supporteWebp ? base + ".webp" : base + ".jpg") + VIMG;
       if (!cache[src]) { cache[src] = new Image(); cache[src].src = src; }
       return cache[src];
     }
@@ -77,7 +79,7 @@
       else { i = dernier[p.slug] != null ? dernier[p.slug] : suivant[p.slug] % p.previews.length; }
       var base = apercuSrc(p, p.previews[i]);
       precharger(apercuSrc(p, p.previews[(i + 1) % p.previews.length]));
-      return supporteWebp ? base + ".webp" : base + ".jpg";
+      return (supporteWebp ? base + ".webp" : base + ".jpg") + VIMG;
     }
 
     var survole = null;
@@ -240,13 +242,13 @@
     var sizes = tailles || "(max-width: 760px) " + TAILLES_TEL[taille] + ", " + TAILLES[taille];
     var set = function (ext) {
       return LARGEURS.filter(function (w) { return w <= d.w && (ext === "webp" || w <= MAX_JPG); })
-        .map(function (w) { return p.base + cle + "-" + w + "." + ext + " " + w + "w"; }).join(", ");
+        .map(function (w) { return p.base + cle + "-" + w + "." + ext + VIMG + " " + w + "w"; }).join(", ");
     };
     var dispo = LARGEURS.filter(function (w) { return w <= d.w && w <= MAX_JPG; });
     var repli = dispo.length ? dispo[dispo.length - 1] : LARGEURS[0];
     var img = el("img", {
       fetchpriority: premiere ? "high" : null,
-      src: p.base + cle + "-" + repli + ".jpg", srcset: set("jpg"), sizes: sizes,
+      src: p.base + cle + "-" + repli + ".jpg" + VIMG, srcset: set("jpg"), sizes: sizes,
       width: d.w, height: d.h, alt: d.alt || "", decoding: "async",
       loading: premiere ? "eager" : "lazy",
       style: "--ar:" + (d.w / d.h).toFixed(4)
@@ -304,7 +306,7 @@
               ? (b.images || []).map(function (c, i) {
                   var no = label.split(" · ")[i], d = p.images[c] || {};
                   return el("figure", { class: "b-pair__img proof proof--leve", tabindex: "0", role: "button", "data-cle": c, "data-no": no,
-                    "aria-label": no + " — " + (d.alt || "") }, [image(p, c, "m", false, szp), numero(no)]);
+                    "aria-label": "Agrandir la photo " + no + " : " + (d.alt || "") }, [image(p, c, "m", false, szp), numero(no)]);
                 })
               : [numero(label), repere(b)].concat((b.images || []).map(function (c) { return el("figure", { style: "margin:0" }, [image(p, c, "m", false, szp)]); })));
         }
@@ -332,7 +334,7 @@
     var actif = null, fermeture = null, cache = {};
     var tel = window.matchMedia("(max-width: 760px)");
 
-    function grande(cle) { return p.base + cle + "-1800" + (supporteWebp ? ".webp" : ".jpg"); }
+    function grande(cle) { return p.base + cle + "-1800" + (supporteWebp ? ".webp" : ".jpg") + VIMG; }
 
     function poser(f) {
       var v = f.querySelector("img"), d = p.images[f.dataset.cle], cs = getComputedStyle(f);
@@ -350,7 +352,7 @@
       no.style.fontSize = (parseFloat(nbs.fontSize) * Math.min(k, 1.6)).toFixed(1) + "px";
       no.textContent = f.dataset.no;
       // d'abord l'image déjà chargée de la vignette, puis la grande dès qu'elle est prête
-      img.src = v.currentSrc || v.src; img.alt = v.alt || "";
+      img.src = v.currentSrc || v.src; img.alt = "";
       var u = grande(f.dataset.cle);
       if (!cache[u]) { cache[u] = new Image(); cache[u].src = u; }
       var g = cache[u];
@@ -369,7 +371,6 @@
       actif = f;
       poser(f);
       ov.classList.add("is-on");
-      ov.setAttribute("aria-hidden", "false");
     }
     function cacher() {
       clearTimeout(fermeture);
@@ -386,8 +387,14 @@
         ov.classList.add("par-toucher");
         montrer(f);
       });
-      // clavier : le focus fait comme le survol
-      f.addEventListener("focus", function () { if (f.matches(":focus-visible")) montrer(f); });
+      // clavier : Entrée ou Espace ouvre et referme ; Échap ferme
+      f.addEventListener("keydown", function (e) {
+        if (e.key !== "Enter" && e.key !== " ") return;
+        e.preventDefault();
+        if (actif === f) cacher(); else montrer(f);
+      });
+      // clavier : si un tirage est ouvert, Tab vers l'image voisine change de photo sans refermer
+      f.addEventListener("focus", function () { if (actif && actif !== f && !ov.classList.contains("par-toucher")) montrer(f); });
       f.addEventListener("blur", function (e) { if (!ov.classList.contains("par-toucher") && leves.indexOf(e.relatedTarget) < 0) cacher(); });
     });
     // toucher : appui hors du tirage = fermer ; appui sur une autre vignette (sous le calque) = changer
