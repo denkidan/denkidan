@@ -22,7 +22,9 @@
   --track: .11em;
   --fade: 220ms;
   --seq-pad: calc(var(--m) * 2 + var(--rail));   /* marge latérale des séquences */
-  --noir: #121211;               /* fond du projet 02 */
+  --noir: #121211;
+  --orange: #EC6A1E;             /* projet 02 : la teinte de la lumière des deux photos en couleur */
+  --blanc-p: #F5F4F0;            /* projet 02 : blanc neutre, sans le jaune du crème */
   --ivoire: #F3F2EE;
   --gris: #8B8B87;
 }
@@ -137,8 +139,23 @@ body.page-projet { overflow-x: hidden; }
 .meta { position: absolute; right: var(--m); writing-mode: vertical-rl; white-space: nowrap; font-size: 10.5px; letter-spacing: var(--track); text-transform: uppercase; opacity: .75; }
 .champ-rouge .meta { color: var(--blanc); }
 
-/* Rails au-dessus du rouge */
-body.papier .rail.sur-rouge { mix-blend-mode: normal; color: var(--blanc); }
+/* Menu au-dessus d'un champ de couleur : copie claire, coupée net à la limite (voir site.js) */
+body.papier .rail.rail-clair { mix-blend-mode: normal; color: var(--blanc); }
+
+/* ---------------- Blanc et orange (Portraits at home) ---------------- */
+
+body.papier.fond-blanc { background: var(--blanc-p); }
+.champ-orange { background: var(--orange); }
+body.fond-blanc .nb { color: #77766F; }
+body.papier .champ-orange .nb, body.papier .b-cheval .nb { color: var(--blanc); }
+/* Photo à cheval : l'orange continue derrière elle jusqu'à --cheval de sa hauteur */
+.b-cheval { position: relative; z-index: 0; }
+.b-cheval .nb { right: calc(var(--m) - var(--seq-pad)); }   /* même marge que les autres numéros */
+.b-cheval::before {
+  content: ""; position: absolute; z-index: -1; background: var(--orange);
+  left: calc(-1 * var(--seq-pad)); right: calc(-1 * var(--seq-pad));
+  top: calc(-1 * var(--mt, 0px) - 1px); height: calc(var(--mt, 0px) + 1px + var(--cheval) * 100%);
+}
 
 /* Menu des pages projet : même graisse que l'accueil, projet ouvert à pleine opacité */
 .page-projet .rail, .page-projet .fin { font-weight: 700; }
@@ -227,6 +244,9 @@ body.noir .rail { color: var(--ivoire); }
   .m-full .nb { width: auto; }
   .b-pair.gap-tight { width: var(--wm, 76vw); max-width: 100%; margin-inline: auto; row-gap: 2vh; }
   .b-pair.gap-tight > :last-child { width: auto; margin-left: 0; }
+  /* à cheval : le numéro sort du flux pour que la limite tombe bien à --cheval de la photo */
+  .b-cheval .nb { position: absolute; bottom: 100%; left: 0; right: 0; }
+  .b-cheval::before { top: calc(-.6 * var(--mt, 0px) - 1px); height: calc(.6 * var(--mt, 0px) + 1px + var(--cheval) * 100%); }
 
   /* Projet : barre du haut horizontale */
   .page-projet .rail--g-haut { top: var(--m); bottom: auto; flex-direction: row; gap: 18px; }

@@ -122,32 +122,33 @@ window.PROJECTS = [
       "test":         { w: 2576, h: 2576, alt: "Portrait flou d’une femme aux cheveux mi-longs, la tête légèrement inclinée" }
     },
 
-    previews: ["shoot-11", "olo-3", "ivan-2", "les-colo-10", "test"],
+    previews: ["def", "shoot-11", "olo-3", "ivan-2", "les-colo-10"],
 
-    // Montage validé (chemin de fer Portraits, editing 02, sans cobalt). Ne pas modifier sans nouvel editing.
+    // Montage validé (chemin de fer Portraits, editing 04 : ouverture en orange, en écho à China).
     // height = part de la hauteur d'écran (svh) ; mobile = largeur sur téléphone (84vw par défaut).
+    // field: "orange" = sur le champ orange ; cheval: 0.32 = la limite orange / blanc passe derrière la photo, à 32 % de sa hauteur.
     sequence: [
-      // I · Le portrait
-      { type: "image", src: "shoot-11",    height: 82, align: "center", marginTop: "9vh" },
+      // I · La couleur : les deux photos en couleur sur l'orange, la seconde à cheval sur la limite
+      { type: "image", src: "def",         height: 82, align: "center", marginTop: "9vh",  field: "orange" },
+      { type: "image", src: "les-colo-10", height: 96, align: "center", marginTop: "30vh", mobile: "88vw", cheval: 0.32 },
+      // II · Le portrait : le profil en noir et blanc répond au profil en couleur
+      { type: "image", src: "shoot-11",    height: 82, align: "left",   marginTop: "55vh" },
       { type: "pair",  images: ["4-2", "4-3"], width: "63vw", gap: "tight", align: "center", marginTop: "24vh" },
       { type: "image", src: "olo-3",       height: 88, align: "right",  marginTop: "30vh" },
-      // II · Le retrait
+      // III · Le retrait
       { type: "image", src: "j-9",         height: 56, align: "left",   marginTop: "60vh", mobile: "76vw" },
       { type: "pair",  images: ["en-rapide-11", "en-rapide-18"], width: "63vw", gap: "tight", align: "right", marginTop: "22vh" },
-      // III · Le miroir (paire empilée)
+      // IV · Le miroir (paire empilée)
       { type: "image", src: "chloe-9",     height: 45, align: "center", marginTop: "55vh", mobile: "76vw" },
       { type: "image", src: "chloe-14",    height: 45, align: "center", marginTop: "3vh",  mobile: "76vw" },
-      // IV · La dissolution : la seule image plus grande que l'écran
+      // V · La dissolution : la seule image plus grande que l'écran
       { type: "image", src: "ivan-2",      width: "88vw", align: "center", marginTop: "80vh", mobile: "full" },
-      // V · Le corps
+      // VI · Le corps
       { type: "image", src: "nolik-3",     height: 82, align: "center", marginTop: "80vh" },
       { type: "image", src: "ivan-6",      height: 86, align: "left",   marginTop: "26vh" },
-      // VI · La couleur
-      { type: "image", src: "def",         height: 86, align: "right",  marginTop: "80vh" },
-      { type: "image", src: "les-colo-10", height: 96, align: "center", marginTop: "70vh", mobile: "88vw" },
-      // VII · Le retour
-      { type: "image", src: "shoot-26",    height: 84, align: "left",   marginTop: "80vh" },
-      { type: "image", src: "test",        height: 80, align: "right",  marginTop: "32vh" },
+      // VII · La fin
+      { type: "image", src: "shoot-26",    height: 84, align: "right",  marginTop: "80vh" },
+      { type: "image", src: "test",        height: 80, align: "left",   marginTop: "32vh" },
       { type: "spacer", height: "50vh" }
     ]
   }

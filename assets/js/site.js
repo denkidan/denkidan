@@ -162,15 +162,35 @@
       }
     });
 
-    // Rails lisibles sur le rouge : crème au-dessus de la limite, comportement habituel en dessous
-    var rails = document.querySelectorAll(".page-projet .rail");
-    var rouges = document.querySelectorAll(".champ-rouge, .b-bascule");
-    if (rouges.length) {
+    // Menu coupé net par la limite du champ de couleur, comme le lettrage :
+    // une copie claire au-dessus de la limite, le menu habituel en dessous.
+    var limite = function () {
+      var ch = document.querySelector(".b-cheval img");
+      if (ch) {
+        var r = ch.getBoundingClientRect();
+        var part = parseFloat(getComputedStyle(ch.closest(".b-cheval")).getPropertyValue("--cheval")) || 0.32;
+        return r.top + r.height * part;
+      }
+      var champs = document.querySelectorAll(".champ, .b-bascule");
+      return champs.length ? champs[champs.length - 1].getBoundingClientRect().bottom : null;
+    };
+    if (limite() !== null) {
+      var paires = [].map.call(document.querySelectorAll(".page-projet .rail"), function (r) {
+        var c = r.cloneNode(true);
+        c.classList.add("rail-clair");
+        c.setAttribute("aria-hidden", "true");
+        c.removeAttribute("aria-label");
+        c.querySelectorAll("a").forEach(function (a) { a.setAttribute("tabindex", "-1"); });
+        r.parentNode.insertBefore(c, r.nextSibling);
+        return [r, c];
+      });
       var majRails = function () {
-        var lim = rouges[rouges.length - 1].getBoundingClientRect().bottom;
-        rails.forEach(function (r) {
-          var b = r.getBoundingClientRect();
-          r.classList.toggle("sur-rouge", (b.top + b.bottom) / 2 < lim);
+        var lim = limite();
+        paires.forEach(function (pc) {
+          var b = pc[0].getBoundingClientRect();
+          var haut = Math.min(Math.max(lim - b.top, 0), b.height);   // part du menu au-dessus de la limite
+          pc[0].style.clipPath = haut > 0 ? "inset(" + haut + "px 0 0 0)" : "";
+          pc[1].style.clipPath = "inset(0 0 " + (b.height - haut) + "px 0)";
         });
       };
       var attente = false;
@@ -179,6 +199,7 @@
         requestAnimationFrame(function () { attente = false; majRails(); });
       }, { passive: true });
       window.addEventListener("resize", majRails);
+      window.addEventListener("load", majRails);
       majRails();
     }
 
@@ -246,8 +267,10 @@
         if (b.height || b.width) {
           var d = p.images[b.src], ar = d ? (d.w / d.h).toFixed(4) : 1;
           var mobile = b.mobile === "full" ? "100vw" : (b.mobile || "84vw");
-          var cls = "b " + (b.height ? "b-h" : "b-w") + " al-" + (b.align || "center") + (b.mobile === "full" ? " m-full" : "");
-          var st = mt + (b.height ? ";--h:" + b.height + "svh" : ";--w:" + b.width) + tel;
+          var cls = "b " + (b.height ? "b-h" : "b-w") + " al-" + (b.align || "center") + (b.mobile === "full" ? " m-full" : "") +
+            (b.cheval != null ? " b-cheval" : "");
+          // cheval : la limite du champ de couleur passe derrière la photo, à cette part de sa hauteur
+          var st = mt + (b.height ? ";--h:" + b.height + "svh" : ";--w:" + b.width) + tel + (b.cheval != null ? ";--cheval:" + b.cheval : "");
           var sz = "(max-width: 760px) " + mobile + ", " + (b.height ? "calc(" + b.height + "vh * " + ar + ")" : b.width);
           return el("figure", { class: cls, style: st }, [numero(label), repere(b), image(p, b.src, "m", premiere, sz)]);
         }
