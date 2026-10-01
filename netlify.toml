@@ -1,0 +1,3 @@
+[build]
+  command = "cp -r envoi-2/assets/. envoi-1/assets/"
+  publish = "envoi-1"
