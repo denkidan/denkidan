@@ -21,6 +21,9 @@
   --track: .11em;
   --fade: 220ms;
   --seq-pad: calc(var(--m) * 2 + var(--rail));   /* marge latérale des séquences */
+  --noir: #121211;               /* fond du projet 02 */
+  --ivoire: #F3F2EE;
+  --gris: #8B8B87;
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -165,6 +168,20 @@ body.papier .rail.sur-rouge { mix-blend-mode: normal; color: var(--blanc); }
 .texte-legal p { margin: 0; }
 .texte-legal a { border-bottom: 1px solid currentColor; }
 
+/* ---------------- Thème noir (Portraits at home) ---------------- */
+
+body.noir { background: var(--noir); color: var(--ivoire); }
+body.noir .rail { color: var(--ivoire); }
+
+/* Images réglées par la hauteur (--h) ou par la largeur (--w) */
+.b.b-h img { width: min(calc(var(--h) * var(--ar)), 100%); max-width: none; height: auto; }
+.b.b-w img { width: var(--w); max-width: none; height: auto; margin-left: calc((100% - var(--w)) / 2); }
+.b-wv { width: var(--w); }
+.b-pair.gap-tight { column-gap: 1vw; }
+
+/* Numérotation grise en marge droite, à la hauteur du haut de l'image */
+.nb { position: absolute; right: var(--m); writing-mode: vertical-rl; white-space: nowrap; font-size: var(--txt); letter-spacing: var(--track); color: var(--gris); font-variant-numeric: tabular-nums; }
+
 /* ---------------- Téléphone : une autre composition ---------------- */
 
 @media (max-width: 760px) {
@@ -189,6 +206,15 @@ body.papier .rail.sur-rouge { mix-blend-mode: normal; color: var(--blanc); }
 
   .lettrage { left: var(--lm); width: var(--wm); top: calc(var(--h) - var(--split) * var(--wm) * var(--ratio)); }
   .meta { right: 4px; font-size: 9.5px; }
+
+  /* Portraits : images seules 76 à 88vw centrées, paires empilées et serrées, numéro au-dessus */
+  .nb { position: static; display: block; writing-mode: horizontal-tb; text-align: right; padding-bottom: 6px; }
+  .b.b-h img, .b.b-w img { width: var(--wm, 84vw); max-width: 100%; margin-inline: auto; }
+  .b-h .nb, .b-w .nb { width: var(--wm, 84vw); max-width: 100%; margin-inline: auto; }
+  .b.m-full img { width: 100vw; max-width: none; margin-left: calc(-1 * var(--seq-pad)); }
+  .m-full .nb { width: auto; }
+  .b-pair.gap-tight { width: var(--wm, 76vw); max-width: 100%; margin-inline: auto; row-gap: 2vh; }
+  .b-pair.gap-tight > :last-child { width: auto; margin-left: 0; }
 
   /* Projet : barre du haut horizontale */
   .page-projet .rail--g-haut { top: var(--m); bottom: auto; flex-direction: row; gap: 18px; }

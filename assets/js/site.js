@@ -140,9 +140,14 @@
 
     // Séquence. Les blocs marqués field: "rouge" qui se suivent sont regroupés dans un même champ de couleur.
     var seq = document.querySelector("[data-sequence]");
-    var champ = null, premiere = true;
+    var champ = null, premiere = true, compte = 0;
+    var deux = function (n) { return ("0" + n).slice(-2); };
     p.sequence.forEach(function (b) {
-      var n = bloc(p, b, premiere && b.type === "image");
+      // Numérotation grise (numbering: true) : une image = un numéro, une paire = deux, comptés depuis les données
+      var label = null;
+      if (p.numbering && b.type === "image") label = deux(++compte);
+      if (p.numbering && b.type === "pair") { label = deux(compte + 1) + " · " + deux(compte + 2); compte += 2; }
+      var n = bloc(p, b, premiere && b.type === "image", label);
       if (!n) return;
       if (b.type === "image") premiere = false;
       if (b.field) {
@@ -206,10 +211,10 @@
   var TAILLES = { xs: "18vw", s: "28vw", m: "42vw", l: "60vw", xl: "78vw", full: "100vw" };
   var TAILLES_TEL = { xs: "42vw", s: "56vw", m: "74vw", l: "92vw", xl: "92vw", full: "100vw" };
 
-  function image(p, cle, taille, premiere) {
+  function image(p, cle, taille, premiere, tailles) {
     var d = p.images[cle];
     if (!d) return null;
-    var sizes = "(max-width: 760px) " + TAILLES_TEL[taille] + ", " + TAILLES[taille];
+    var sizes = tailles || "(max-width: 760px) " + TAILLES_TEL[taille] + ", " + TAILLES[taille];
     var set = function (ext) {
       return LARGEURS.filter(function (w) { return w <= d.w && (ext === "webp" || w <= MAX_JPG); })
         .map(function (w) { return p.base + cle + "-" + w + "." + ext + " " + w + "w"; }).join(", ");
@@ -231,10 +236,22 @@
 
   var LETTRAGES = { titre: { ratio: 2641 / 1256, label: "我真他妈喜欢中国" } };
 
-  function bloc(p, b, premiere) {
+  function numero(label) { return label ? el("span", { class: "nb", "aria-hidden": "true", text: label }) : null; }
+
+  function bloc(p, b, premiere, label) {
     var mt = b.marginTop ? "--mt:" + b.marginTop : "";
+    var tel = b.mobile && b.mobile !== "full" ? ";--wm:" + b.mobile : "";
     switch (b.type) {
       case "image":
+        // Réglée par la hauteur (height: 82 → 82svh) ou par la largeur (width: "88vw")
+        if (b.height || b.width) {
+          var d = p.images[b.src], ar = d ? (d.w / d.h).toFixed(4) : 1;
+          var mobile = b.mobile === "full" ? "100vw" : (b.mobile || "84vw");
+          var cls = "b " + (b.height ? "b-h" : "b-w") + " al-" + (b.align || "center") + (b.mobile === "full" ? " m-full" : "");
+          var st = mt + (b.height ? ";--h:" + b.height + "svh" : ";--w:" + b.width) + tel;
+          var sz = "(max-width: 760px) " + mobile + ", " + (b.height ? "calc(" + b.height + "vh * " + ar + ")" : b.width);
+          return el("figure", { class: cls, style: st }, [numero(label), repere(b), image(p, b.src, "m", premiere, sz)]);
+        }
         return el("figure", { class: "b s-" + (b.size || "m") + " al-" + (b.align || "center"), style: mt },
           [repere(b), image(p, b.src, b.size || "m", premiere), b.caption ? el("figcaption", { text: b.caption }) : null]);
       case "fullBleed":
@@ -253,6 +270,12 @@
           el("img", { class: "lettrage lettrage-bas", src: base + "-rouge.svg", alt: "", width: 1256, height: 2641 })
         ]);
       case "pair":
+        if (b.width) {
+          // Paire de largeur fixe (width: "63vw", gap: "tight") : une seule phrase en deux images
+          var szp = "(max-width: 760px) " + (b.mobile || "76vw") + ", calc((" + b.width + " - 1vw) / 2)";
+          return el("div", { class: "b b-pair b-wv al-" + (b.align || "center") + " gap-" + (b.gap || "tight") + " va-" + (b.valign || "start"), style: mt + ";--w:" + b.width + tel },
+            [numero(label), repere(b)].concat((b.images || []).map(function (c) { return el("figure", { style: "margin:0" }, [image(p, c, "m", false, szp)]); })));
+        }
         var demi = { xs: "xs", s: "xs", m: "s", l: "s", xl: "m", full: "m" }[b.size || "l"];
         return el("div", { class: "b b-pair s-" + (b.size || "l") + " al-" + (b.align || "center") + " gap-" + (b.gap || "small") + " va-" + (b.valign || "end"), style: mt },
           [repere(b)].concat((b.images || []).map(function (c) { return el("figure", { style: "margin:0" }, [image(p, c, demi)]); })));
