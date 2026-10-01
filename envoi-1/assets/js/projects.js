@@ -85,14 +85,8 @@ window.PROJECTS = [
       { type: "image", src: "peches",      size: "m",  align: "left",   marginTop: "85vh" },
       { type: "image", src: "mere-bebe",   size: "l",  align: "center", marginTop: "40vh" },
       { type: "image", src: "mur-rose",    size: "xl", align: "center", marginTop: "70vh" },
-      { type: "spacer", height: "40vh" }
-    ],
+      { type: "spacer", height: "50vh" }
+    ]
 
-    // Section INFO, en fin de projet
-    info: [
-      "Photographies, Chine.",
-      "Livre — 80 pages, 22 × 26,6 cm, reliure cousue, tiré à 100 exemplaires. Couvertures de plusieurs couleurs, envoyées au hasard ; le rose est l’édition principale."
-    ],
-    book: { label: "Réserver un exemplaire", subject: "Livre 我真他妈喜欢中国" }
   }
 ];

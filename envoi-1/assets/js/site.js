@@ -179,9 +179,9 @@
 
     // Info
     var info = document.querySelector("[data-info]");
-    info.appendChild(el("h2", { class: "zh", lang: p.lang || null, text: p.title }));
-    (p.info || []).forEach(function (txt) { info.appendChild(el("p", { text: txt })); });
-    if (p.book) {
+    if (info) info.appendChild(el("h2", { class: "zh", lang: p.lang || null, text: p.title }));
+    if (info) (p.info || []).forEach(function (txt) { info.appendChild(el("p", { text: txt })); });
+    if (info && p.book) {
       var mail = "mailto:" + SITE.email + "?subject=" + encodeURIComponent(p.book.subject || p.title);
       info.appendChild(el("p", {}, [el("a", { href: mail, text: p.book.label + " →" })]));
     }
