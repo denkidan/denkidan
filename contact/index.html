@@ -23,7 +23,7 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="preload" href="/assets/fonts/denkidan-400.woff" as="font" type="font/woff" crossorigin>
 <link rel="preload" href="/assets/fonts/denkidan-700.woff" as="font" type="font/woff" crossorigin>
-<link rel="stylesheet" href="/assets/css/site.css?v=7">
+<link rel="stylesheet" href="/assets/css/site.css?v=8">
 </head>
 <body class="rouge page-contact">
   <div class="grain" aria-hidden="true"></div>
@@ -41,13 +41,33 @@
 
   <main class="bloc-centre">
     <h1 class="sr">Contact</h1>
-    <span class="lab">Commandes et collaborations</span>
-    <a href="mailto:lucastalarn@gmail.com">lucastalarn@gmail.com</a>
+    <h2 class="lab">Commandes et collaborations</h2>
+
+    <!-- Envoyé par Netlify Forms : chaque message arrive par e-mail, l'adresse reste privée -->
+    <form class="contact-form" name="contact" method="POST" action="/contact/merci/" data-netlify="true" netlify-honeypot="bot-field" data-contact>
+      <input type="hidden" name="form-name" value="contact">
+      <p class="cf-piege" aria-hidden="true"><label>Ne pas remplir <input name="bot-field" tabindex="-1" autocomplete="off"></label></p>
+      <div class="cf-champ">
+        <label class="lab" for="cf-nom">Nom</label>
+        <input class="cf-input" id="cf-nom" name="nom" type="text" autocomplete="name" required>
+      </div>
+      <div class="cf-champ">
+        <label class="lab" for="cf-email">E-mail pour vous répondre</label>
+        <input class="cf-input" id="cf-email" name="email" type="email" autocomplete="email" inputmode="email" required>
+      </div>
+      <div class="cf-champ">
+        <label class="lab" for="cf-message">Message</label>
+        <textarea class="cf-input" id="cf-message" name="message" rows="6" required></textarea>
+      </div>
+      <button class="cf-envoyer" type="submit">Envoyer</button>
+    </form>
+    <p class="cf-etat" data-contact-etat role="status" tabindex="-1"></p>
+
     <a href="https://www.instagram.com/denkidan/" data-instagram target="_blank" rel="noopener">Instagram</a>
     <a class="lab" href="/mentions-legales/" style="border:0;margin-top:10px">Mentions légales</a>
   </main>
 
-  <script src="/assets/js/projects.js?v=7"></script>
-  <script src="/assets/js/site.js?v=7"></script>
+  <script src="/assets/js/projects.js?v=8"></script>
+  <script src="/assets/js/site.js?v=8"></script>
 </body>
 </html>

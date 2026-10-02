@@ -105,6 +105,31 @@ body.depart .rail, body.depart .bloc-centre { opacity: 0; transition: opacity 14
 .bloc-centre a { border-bottom: 1px solid rgba(255,255,245,.45); align-self: flex-start; }
 .bloc-centre a:hover { border-bottom-color: currentColor; }
 .bloc-centre .lab { text-transform: uppercase; letter-spacing: var(--track); font-size: var(--txt); opacity: .7; }
+.bloc-centre h1.lab, .bloc-centre h2.lab { margin: 0; font-weight: inherit; }
+
+/* Contact : la page défile (clavier du téléphone), le bloc reste centré sur ordinateur */
+body.page-contact { height: auto; min-height: 100svh; overflow-x: hidden; overflow-y: auto; }
+.page-contact .bloc-centre { position: relative; left: auto; top: auto; transform: none;
+  width: min(400px, calc(100vw - 2 * var(--seq-pad))); min-height: 100svh; margin-inline: auto;
+  justify-content: center; padding-block: 12svh; }
+/* Formulaire : des lignes, pas des cases */
+.contact-form { display: flex; flex-direction: column; gap: 20px; margin: 4px 0 6px; }
+.contact-form[hidden] { display: none; }
+.cf-champ { display: flex; flex-direction: column; gap: 4px; }
+.contact-form .lab { opacity: .85; }
+.cf-input { font: inherit; font-size: 14px; line-height: 1.5; letter-spacing: .02em; color: inherit; background: transparent;
+  border: 0; border-bottom: 1px solid rgba(255, 255, 245, .45); border-radius: 0; padding: 6px 0 7px; width: 100%; outline: none; }
+.cf-input:hover { border-bottom-color: rgba(255, 255, 245, .75); }
+.cf-input:focus { border-bottom-color: currentColor; box-shadow: 0 1px 0 currentColor; }
+textarea.cf-input { resize: vertical; min-height: 8.5em; }
+.cf-input:-webkit-autofill { -webkit-text-fill-color: var(--blanc); box-shadow: inset 0 0 0 100px var(--rouge); caret-color: var(--blanc); }
+.cf-envoyer { appearance: none; align-self: flex-start; margin-top: 4px; padding: 8px 0 5px; background: none; border: 0; border-bottom: 1px solid currentColor;
+  border-radius: 0; color: inherit; font: inherit; font-size: var(--txt); font-weight: 700; text-transform: uppercase; letter-spacing: var(--track); cursor: pointer; }
+.cf-envoyer:disabled { opacity: .6; cursor: default; }
+.cf-envoyer:focus-visible { outline: 1px solid currentColor; outline-offset: 5px; }
+.cf-etat { margin: 0; font-size: 13px; line-height: 1.5; outline: none; }
+.cf-etat:empty { display: none; }
+.cf-piege { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
 
 /* ---------------- Pages papier (projet, mentions) ---------------- */
 
@@ -290,6 +315,11 @@ body.edito .fin { margin-top: 26vh; }
   .page-projet .rail--g-haut { top: calc(var(--m) + var(--sa-t)); bottom: auto; flex-direction: row; gap: 18px; }
   .page-projet .rail--g-haut ul { flex-direction: row; gap: 18px; }
   .page-projet .rail--d-bas  { top: calc(var(--m) + var(--sa-t)); bottom: auto; }
+}
+/* Contact sur téléphone : le formulaire passe entre le nom (en haut) et les menus (en bas) */
+@media (max-width: 760px) {
+  .page-contact .bloc-centre { width: auto; min-height: 0; margin-inline: calc(var(--m) + var(--sa-l)); justify-content: flex-start; padding-block: 84px 170px; }
+  .cf-input { font-size: 16px; }   /* 16 px : Safari iPhone ne zoome pas sur le champ */
 }
 /* Edito sur téléphone : papier réduit, images seules à 84 %, diptyques côte à côte (jamais empilés) */
 @media (max-width: 760px) {

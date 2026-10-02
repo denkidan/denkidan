@@ -208,15 +208,6 @@
       majRails();
     }
 
-    // Info
-    var info = document.querySelector("[data-info]");
-    if (info) info.appendChild(el("h2", { class: "zh", lang: p.lang || null, text: p.title }));
-    if (info) (p.info || []).forEach(function (txt) { info.appendChild(el("p", { text: txt })); });
-    if (info && p.book) {
-      var mail = "mailto:" + SITE.email + "?subject=" + encodeURIComponent(p.book.subject || p.title);
-      info.appendChild(el("p", {}, [el("a", { href: mail, text: p.book.label + " →" })]));
-    }
-
     // Fin : retour au menu à gauche, projet suivant à droite (le dernier renvoie au premier)
     var fin = document.querySelector("[data-suivant]");
     fin.appendChild(el("a", { class: "lnk", href: "/", text: "Menu" }));
@@ -408,6 +399,33 @@
     window.addEventListener("pagehide", cacher);
   }
 
+  /* ======================= CONTACT ======================= */
+  // Le formulaire est envoyé à Netlify, qui transmet chaque message par e-mail : l'adresse n'apparaît nulle part sur le site.
+  function contact() {
+    var f = document.querySelector("[data-contact]");
+    if (!f || !window.fetch || !window.URLSearchParams) return;
+    var etat = document.querySelector("[data-contact-etat]");
+    var bouton = f.querySelector("button[type=submit]");
+    f.addEventListener("submit", function (e) {
+      e.preventDefault();
+      bouton.disabled = true; bouton.textContent = "Envoi…";
+      etat.textContent = "";
+      fetch("/", {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams(new FormData(f)).toString()
+      }).then(function (r) {
+        if (!r.ok) throw new Error(r.status);
+        f.hidden = true;
+        etat.textContent = "Merci, votre message est bien envoyé.";
+        etat.focus();
+      }).catch(function () {
+        bouton.disabled = false; bouton.textContent = "Envoyer";
+        etat.textContent = "L’envoi n’a pas abouti. Réessayez dans un instant, ou écrivez-moi sur Instagram.";
+      });
+    });
+  }
+
   /* ======================= DÉMARRAGE ======================= */
   var supporteWebp = (function () {
     try { return document.createElement("canvas").toDataURL("image/webp").indexOf("data:image/webp") === 0; }
@@ -426,4 +444,5 @@
 
   if (document.body.classList.contains("page-accueil")) accueil();
   if (document.body.classList.contains("page-projet")) projet();
+  if (document.body.classList.contains("page-contact")) contact();
 })();
